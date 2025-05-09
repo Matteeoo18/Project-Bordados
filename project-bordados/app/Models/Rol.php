@@ -8,7 +8,7 @@ class Rol extends Model
 {
     //
     protected $fillable = [
-        'nombre'
+        'nombre_rol'
     ];
 
     public function usuarios()
