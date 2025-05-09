@@ -65,8 +65,14 @@ class User extends Authenticatable
         ];
     }
     // Funcion para obtener el rol del usuario
-    public function rol()
+    public function roles()
     {
         return $this->belongsTo(Rol::class);
     }
+
+    public function catalogos()
+    {   
+        return $this->hasMany(Catalogo::class);
+    }
+
 }
