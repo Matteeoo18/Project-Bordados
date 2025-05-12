@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('catologos', function (Blueprint $table) {
+        Schema::create('catalogos', function (Blueprint $table) {
             $table->id();
             $table->string('titulo_post', 50);
             $table->string('enlace_post');
             $table->string('descripcion_post');
-            $table->foreignId('id_usuario')->references('id')->on('users');
+            $table->foreignId('id_usuario')->constrained('users');
             $table->boolean('is_active_post')->default(true);
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('catologos');
+        Schema::dropIfExists('catalogos');
     }
 };

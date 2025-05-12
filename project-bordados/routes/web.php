@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatalogoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,7 +19,9 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    // aqui van la rutas de los controladores
+    Route::get('/dashboard', [CatalogoController::class, 'index'])->name('dashboard');
+    // aqui se recibi el id a eliminar
+    Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+    Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
 });

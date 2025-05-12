@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Catalogo extends Model
 {
+    protected $table = 'catalogos';
     protected $fillable = [
         'titulo_post',
         'enlace_post',

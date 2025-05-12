@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
 
         // Insertar un rol por defecto 'admin' para el usuario
         $this->call(RolesSeeder::class);
+        $this->call(ProductoSeeder::class);
     }
 }
