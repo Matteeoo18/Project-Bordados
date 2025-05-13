@@ -50,7 +50,7 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Mis Productos
                                 </NavLink>
                                 <NavLink :href="route('usuarios.index')" :active="route().current('usuarios.index')">
                                     Usuarios
