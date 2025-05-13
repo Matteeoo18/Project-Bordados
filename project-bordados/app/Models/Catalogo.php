@@ -16,6 +16,6 @@ class Catalogo extends Model
 
     public function user()
     {
-        return $this->belongsTo(Catalogo::class);
+        return $this->belongsTo(Catalogo::class, "id_usuario");
     }
 }

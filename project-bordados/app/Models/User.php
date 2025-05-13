@@ -29,6 +29,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'id_rol',
+        'is_active',
     ];
 
     /**
@@ -67,7 +69,7 @@ class User extends Authenticatable
     // Funcion para obtener el rol del usuario
     public function roles()
     {
-        return $this->belongsTo(Rol::class);
+        return $this->belongsTo(Rol::class, "id_rol");
     }
 
     public function catalogos()

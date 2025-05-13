@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +22,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    
+    Route::prefix('usuarios')->group(function (){
+        Route::get('/', [UserController::class, 'index'])->name('usuarios.index');
+        Route::post('/fillterUsers', [UserController::class, 'fillUsers'])->name('usuarios.fill');
+    });
 });
