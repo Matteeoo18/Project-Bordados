@@ -27,6 +27,9 @@ Route::middleware([
     Route::prefix('usuarios')->group(function (){
         Route::get('/', [UserController::class, 'index'])->name('usuarios.index');
         Route::post('/fillterUsers', [UserController::class, 'fillUsers'])->name('usuarios.fill');
+        Route::get('/fillUsersBystatus/{status}',[UserController::class, 'fillByStatus'])->name('usuarios.fillByStatus');
+        //RUTA PARA DESACTIVAR/ACTIVAR USUARIOS
+        Route::put('/updateStatus/{id}',[UserController::class, 'changeStatusUser'])->name('usuarios.updateStatus');
     });
     // aqui van la rutas de los controladores
     Route::get('/dashboard', [CatalogoController::class, 'index'])->name('dashboard');
