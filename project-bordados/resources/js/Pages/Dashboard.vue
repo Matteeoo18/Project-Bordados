@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
 defineProps({
-  productos: Array
+  productos: Object,
 })
 </script>
 

@@ -5,7 +5,7 @@ import { router } from '@inertiajs/vue3'
 
 // Accedemos a las props
 const props = defineProps({
-    producto: Object
+    producto: Object,
 })
 
 // Variables reactivas con los valores actuales del producto

@@ -21,7 +21,10 @@ Route::middleware([
 ])->group(function () {
     // aqui van la rutas de los controladores
     Route::get('/dashboard', [CatalogoController::class, 'index'])->name('dashboard');
+    // creamos la ruta para crear un producto
+    Route::get('/catalogo/create', [CatalogoController::class, 'create'])->name('catalogo.create');
     // aqui se recibi el id a eliminar
+    Route::post('/catalogo/store', [CatalogoController::class, 'store'])->name('catalogo.store');
     Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
     Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
 });
