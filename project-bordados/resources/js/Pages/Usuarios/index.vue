@@ -104,21 +104,31 @@ export default defineComponent({
         }
     },
     methods: {
-        // Agregar el try y el catch para protegerse de errores
         filtrarUsuarios() {
             if (this.inputFill != "") {
 
                 axios.post(route('usuarios.fill'), { 'dataFill': this.inputFill }).then(res => {
                     this.userData = res.data.user;
                     this.message = res.data.message
-                    this.showMessage() 
+                    this.showMessage()
+                }).catch(err => {
+                    this.message = "Ocurrio un error al filtrar los usuarios" 
+                    this.showMessage()
                 })
-            } else if (this.sFillStatus != "") {
+            } else {
+                this.message = "Ingrese datos para buscar"
+                this.showMessage()
+            }
+
+            if (this.sFillStatus != "") {
                 axios.get(route('usuarios.fillByStatus', { status: this.sFillStatus })).then(res => {
                     console.log(res.data)
                     this.userData = res.data.user
                     this.message = res.data.message
-                    this.showMessage() 
+                    this.showMessage()
+                }).catch(err => {
+                    this.message = "Ocurrio un error al filtrar los usuarios por el estado"
+                    this.showMessage()
                 })
             }
         },
@@ -131,6 +141,9 @@ export default defineComponent({
                 this.message = res.data.message
                 this.showMessage()
 
+            }).catch(err => {
+                this.message = "Ocurrio un error al actualizar los usuarios"
+                this.showMessage()
             })
         },
         showMessage() {
