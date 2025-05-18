@@ -1,28 +1,36 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import Dropzone from '@/Components/Dropzone.vue'
 import axios from 'axios'
 
+const archivo = ref(null) 
 // 1. Definir formulario reactivo
 const form = reactive({
     titulo: '',
-    descripcion: '',
-    archivo: null
+    descripcion: ''
 })
 
 // 2. Manejar selección de archivo
 const select_file = (event) => {
     form.archivo = event.target.files[0]
 }
+
+const filesU = (files) => {
+    archivo.value = files[0]
+}
+
 // 3. Enviar formulario con Inertia
 const crearProducto = () => {
     console.log("Entro a crear producto");
-    console.log(form);
+    // console.log(form);
     const formData = new FormData()
     formData.append('titulo', form.titulo)
     formData.append('descripcion', form.descripcion)
-    formData.append('archivo', form.archivo)
+    formData.append('archivo', archivo.value)
+    console.log(formData);
+    
     // Enviar el formulario usando Inertia
     router.post(route('catalogo.store'), formData, {
         forceFormData: true, // Asegura que se envíe como multipart/form-data
@@ -51,7 +59,8 @@ const crearProducto = () => {
 
                     <div>
                         <label class="block text-gray-700">Imagen o video</label>
-                        <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" />
+                        <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
+                         <Dropzone @files="filesU"></Dropzone>
                     </div>
 
                     <div>

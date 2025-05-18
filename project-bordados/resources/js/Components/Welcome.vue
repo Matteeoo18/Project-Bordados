@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { router ,moun} from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 
 // importamos inertia para poder usarlo

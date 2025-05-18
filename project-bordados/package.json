@@ -21,6 +21,7 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "vue3-dropzone": "^2.2.1",
         "ziggy-js": "^2.5.2"
     }
 }
