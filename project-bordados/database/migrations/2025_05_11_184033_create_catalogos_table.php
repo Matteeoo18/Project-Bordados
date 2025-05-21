@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('titulo_post', 50);
             $table->string('enlace_post');
             $table->string('descripcion_post');
+            $table->string("public_id");
             $table->foreignId('id_usuario')->constrained('users');
             $table->boolean('is_active_post')->default(true);
             $table->timestamps();

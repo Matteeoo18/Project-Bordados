@@ -1,16 +1,26 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Dropzone from '@/Components/Dropzone.vue'
 import axios from 'axios'
+import { route } from 'ziggy-js'
 
-const archivo = ref(null) 
+
+const archivo = ref(null)
 // 1. Definir formulario reactivo
 const form = reactive({
     titulo: '',
     descripcion: ''
 })
+
+const cloudData = reactive({
+    signature: '',
+    timestamp: '',
+    apik: '',
+    cloud_name: ''
+})
+
 
 // 2. Manejar selección de archivo
 const select_file = (event) => {
@@ -30,7 +40,7 @@ const crearProducto = () => {
     formData.append('descripcion', form.descripcion)
     formData.append('archivo', archivo.value)
     console.log(formData);
-    
+
     // Enviar el formulario usando Inertia
     router.post(route('catalogo.store'), formData, {
         forceFormData: true, // Asegura que se envíe como multipart/form-data
@@ -43,6 +53,21 @@ const crearProducto = () => {
         }
     })
 }
+
+//Funcion para llamar la ruta de signature
+const getSignature = () => {
+    axios.get(route('catalogo.signature')).then(res => {
+        // console.log(res.data)
+        cloudData.signature = res.data.signature
+        cloudData.timestamp = res.data.timestamp
+        cloudData.apik = res.data.api_key
+        cloudData.cloud_name = res.data.cloud_name 
+    })
+}
+
+onMounted(() => {
+    getSignature()
+})
 </script>
 
 <template>
@@ -60,7 +85,7 @@ const crearProducto = () => {
                     <div>
                         <label class="block text-gray-700">Imagen o video</label>
                         <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
-                         <Dropzone @files="filesU"></Dropzone>
+                        <Dropzone @files="filesU"></Dropzone>
                     </div>
 
                     <div>

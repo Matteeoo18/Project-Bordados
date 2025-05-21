@@ -39,4 +39,6 @@ Route::middleware([
     Route::post('/catalogo/store', [CatalogoController::class, 'store'])->name('catalogo.store');
     Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
     Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
+    //Ruta para enviar al front la firma del cloudniary 
+    Route::get('/cloudinary-signature',[CatalogoController::class,'signature'])->name('catalogo.signature');
 });
