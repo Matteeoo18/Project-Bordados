@@ -17,6 +17,7 @@ const form = reactive({
 const cloudData = reactive({
     signature: '',
     timestamp: '',
+    uplpreset: '',
     apik: '',
     cloud_name: ''
 })
@@ -54,14 +55,32 @@ const crearProducto = () => {
     })
 }
 
+const sendCloudinary = () => {
+    const url  = `https://api.cloudinary.com/v1_1/${cloudData.cloud_name}/upload`       
+
+    const formData = new FormData()
+    formData.append('file', archivo.value)
+    formData.append('upload_preset', cloudData.uplpreset)
+    formData.append('tags', 'Producto nuevo')
+
+    axios.post(url, formData).then(res => {
+        console.log(res.data);
+    }).catch(error => {
+        console.error('Error al hacer la petición:', error)
+    })
+}
+
 //Funcion para llamar la ruta de signature
 const getSignature = () => {
     axios.get(route('catalogo.signature')).then(res => {
         // console.log(res.data)
         cloudData.signature = res.data.signature
         cloudData.timestamp = res.data.timestamp
+        cloudData.uplpreset = res.data.upload_preset
         cloudData.apik = res.data.api_key
         cloudData.cloud_name = res.data.cloud_name 
+    }).catch(error => {
+        console.error('Error al hacer la petición:', error)
     })
 }
 
@@ -76,7 +95,7 @@ onMounted(() => {
             <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
                 <h2 class="text-2xl font-bold mb-4">Crear Producto</h2>
 
-                <form @submit.prevent="crearProducto" class="space-y-4">
+                <form @submit.prevent="sendCloudinary" class="space-y-4">
                     <div>
                         <label class="block text-gray-700">Título</label>
                         <input v-model="form.titulo" type="text" class="w-full border rounded p-2" />

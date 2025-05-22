@@ -71,7 +71,8 @@ class CatalogoController extends Controller
         return response()->json([
             'signature' => $signature,
             'timestamp' => $timestamp,
-            'api_key' => env('CLOUDINARY_UPLOAD_PRESET'),
+            'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
+            'api_key' => env('CLOUDINARY_API_KEY'),
             'cloud_name' => env('CLOUDINDARY_NAME'),
         ]);
 
