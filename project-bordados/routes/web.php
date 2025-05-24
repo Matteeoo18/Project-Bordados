@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CatalogoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +23,22 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    
+    Route::prefix('usuarios')->group(function (){
+        Route::get('/', [UserController::class, 'index'])->name('usuarios.index');
+        Route::post('/fillterUsers', [UserController::class, 'fillUsers'])->name('usuarios.fill');
+        Route::get('/fillUsersBystatus/{status}',[UserController::class, 'fillByStatus'])->name('usuarios.fillByStatus');
+        //RUTA PARA DESACTIVAR/ACTIVAR USUARIOS
+        Route::put('/updateStatus/{id}',[UserController::class, 'changeStatusUser'])->name('usuarios.updateStatus');
+    });
+    // aqui van la rutas de los controladores
+    Route::get('/dashboard', [CatalogoController::class, 'index'])->name('dashboard');
+    // creamos la ruta para crear un producto
+    Route::get('/catalogo/create', [CatalogoController::class, 'create'])->name('catalogo.create');
+    // aqui se recibi el id a eliminar
+    Route::post('/catalogo/store', [CatalogoController::class, 'store'])->name('catalogo.store');
+    Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+    Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
+    //Ruta para enviar al front la firma del cloudniary 
+    Route::get('/cloudinary-signature',[CatalogoController::class,'signature'])->name('catalogo.signature');
 });

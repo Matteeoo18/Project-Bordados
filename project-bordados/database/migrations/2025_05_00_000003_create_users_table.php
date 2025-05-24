@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            // redisenar el campo id_rol ya que por defecto es 1 mirar eso
+            $table->unsignedBigInteger('id_rol')->default(1);
+            $table->foreign('id_rol')->references('id')->on('roles');
+            $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

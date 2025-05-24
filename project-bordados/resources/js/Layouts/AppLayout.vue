@@ -7,6 +7,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { route } from 'ziggy-js';
 
 defineProps({
     title: String,
@@ -49,8 +50,12 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Mis Productos
                                 </NavLink>
+                                <NavLink :href="route('usuarios.index')" :active="route().current('usuarios.index')">
+                                    Usuarios
+                                </NavLink>
+                                
                             </div>
                         </div>
 

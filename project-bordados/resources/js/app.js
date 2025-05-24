@@ -15,6 +15,8 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            // esto es para que funcione el helper route() de laravel en toda parte del proyecto
+            .mixin({ methods: { route } })
             .mount(el);
     },
     progress: {
