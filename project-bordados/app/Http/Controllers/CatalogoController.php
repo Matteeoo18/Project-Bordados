@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 // importamos inertia para usarlo en el controlador
 use App\Models\Catalogo;
@@ -26,14 +27,23 @@ class CatalogoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'titulo' => 'required|string',
+            'titulo' => 'required|string|max:50',
             'descripcion' => 'required|string',
-            'archivo' => 'required|file|mimes:jpg,jpeg,png,mp4,mov,avi',
         ]);
-        dd([
-            'campos' => $request->all(),
-            'archivo' => $request->file('archivo')
+        // dd([
+        //     'campos' => $request->all(),
+        //     'archivo' => $request->file('archivo')
+        // ]);
+        Catalogo::create([
+            "titulo_post"=>$request->input("titulo"),
+            "enlace_post"=>$request->input("enlace_post"),
+            "descripcion_post"=>$request->input("descripcion"),
+            "public_id"=>$request->input("public_id"),
+            "tag_post"=>$request->input("tag_post"),
+            "id_usuario"=>Auth()->user()->id,            
         ]);
+
+        return redirect("/dashboard");
     }
 
     // aqui recibimos el id  a eliminar de la table

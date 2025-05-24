@@ -74,7 +74,7 @@
   const options = reactive({
     multiple: false,
     onDrop,
-    accept: 'image/*,.pdf,.docx,.mp4,.webm,.avi'
+    accept: 'image/*,.mp4,.webm,.avi'
   })
 
   const {
