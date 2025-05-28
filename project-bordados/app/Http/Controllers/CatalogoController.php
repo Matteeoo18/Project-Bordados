@@ -35,12 +35,13 @@ class CatalogoController extends Controller
         //     'archivo' => $request->file('archivo')
         // ]);
         Catalogo::create([
-            "titulo_post"=>$request->input("titulo"),
-            "enlace_post"=>$request->input("enlace_post"),
-            "descripcion_post"=>$request->input("descripcion"),
-            "public_id"=>$request->input("public_id"),
-            "tag_post"=>$request->input("tag_post"),
-            "id_usuario"=>Auth()->user()->id,            
+            "titulo_post" => $request->input("titulo"),
+            "enlace_post" => $request->input("enlace_post"),
+            "descripcion_post" => $request->input("descripcion"),
+            "public_id" => $request->input("public_id"),
+            "tag_post" => $request->input("tag_post"),
+            "type_post" => $request->input("type_post"),
+            "id_usuario" => Auth()->user()->id,
         ]);
 
         return redirect("/dashboard");
@@ -76,7 +77,7 @@ class CatalogoController extends Controller
             'timestamp' => $timestamp,
         ];
 
-        $signature = ApiUtils::signParameters($params_to_sign,env('CLOUDINARY_NOTIFICATION_URL'));
+        $signature = ApiUtils::signParameters($params_to_sign, env('CLOUDINARY_NOTIFICATION_URL'));
 
         return response()->json([
             'signature' => $signature,
@@ -85,6 +86,22 @@ class CatalogoController extends Controller
             'api_key' => env('CLOUDINARY_API_KEY'),
             'cloud_name' => env('CLOUDINDARY_NAME'),
         ]);
+    }
 
+    public function fillFiles($type)
+    {
+        $query = Catalogo::where("type_post", $type)->paginate(20);
+
+        if ($query->isEmpty()) {
+            return response()->json([
+                'productosFill' => $query,
+                'message' => 'No se han encontrado resultados referentes al tipo de archivo (' . $type . ') '
+            ]);
+        }
+
+        return response()->json([
+            'productosFill' => $query,
+            'message' => 'Se han filtrado los archivos (' . $type . ') correctamente'
+        ]);
     }
 }

@@ -13,6 +13,7 @@ class Catalogo extends Model
         'descripcion_post',
         'public_id',
         'tag_post',
+        'type_post',
         'id_usuario',
         'is_active_post'    
     ];

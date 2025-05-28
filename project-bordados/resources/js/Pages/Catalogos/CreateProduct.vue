@@ -30,7 +30,7 @@ const filesU = (files) => {
 }
 
 //  Enviar formulario con Inertia 
-const crearProducto = (url, publicId, tag) => {
+const crearProducto = (url, publicId, tag, res_type) => {
     // console.log(form);
     const formData = new FormData()
     formData.append('titulo', form.titulo)
@@ -38,6 +38,7 @@ const crearProducto = (url, publicId, tag) => {
     formData.append('enlace_post', url)
     formData.append('public_id', publicId)
     formData.append('tag_post', tag)
+    formData.append('type_post', res_type)
     // console.log(formData);
 
     // Enviar el formulario usando Inertia
@@ -78,8 +79,8 @@ const sendCloudinary = () => {
         formData.append('tags', form.titulo + " " + tag.value)
 
         axios.post(url, formData).then(res => {
-            console.log(res.data);
-            crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0])
+            console.log(res.data);  //Se necesita la key del json "resource_type"
+            crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0], res.data.resource_type)
         }).catch(error => {
             console.error('Error al hacer la petición:', error.data)
             errors.value.archivo = "No se ha podido almacenar el archivo, asegurese que el tamaño no supere 100 MB."
