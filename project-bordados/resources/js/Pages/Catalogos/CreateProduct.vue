@@ -80,7 +80,6 @@ const sendCloudinary = () => {
         formData.append('tags', form.titulo + " " + tag.value)
 
         axios.post(url, formData).then(res => {
-            console.log(res.data);  //Se necesita la key del json "resource_type"
             crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0], res.data.resource_type)
         }).catch(error => {
             console.error('Error al hacer la petición:', error.data)
