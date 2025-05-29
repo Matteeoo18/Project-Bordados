@@ -38,6 +38,7 @@ Route::middleware([
     // aqui se recibi el id a eliminar
     Route::post('/catalogo/store', [CatalogoController::class, 'store'])->name('catalogo.store');
     Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+    Route::post('/catalogo/{id}', [CatalogoController::class, 'updatearchive'])->name('catalogo.update');
     Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
     //Ruta para filtrar los archivos de imagen y video.
     Route::get("/fillFiles/{type}", [CatalogoController::class,'fillFiles'])->name('catalogo.fillFiles');

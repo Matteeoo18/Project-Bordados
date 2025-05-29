@@ -129,13 +129,12 @@ onMounted(() => {
                     <div>
                         <label class="block text-gray-700">Imagen o video</label>
                         <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
-                        <P><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo asegurese que no supere las 100 MB.</P>
+                        <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo asegurese que no supere las 100 MB.</p>
                         <Dropzone @files="filesU"></Dropzone>
                         <div v-if="errors.archivo">
                             <p class="text-red-600">{{ errors.archivo }}</p>
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-gray-700">Descripción</label>
                         <textarea v-model="form.descripcion" name="descripcion"

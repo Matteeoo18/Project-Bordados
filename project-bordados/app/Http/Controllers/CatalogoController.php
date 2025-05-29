@@ -9,6 +9,8 @@ use App\Models\Catalogo;
 use Inertia\Inertia;
 use Cloudinary\Api\ApiUtils;
 use Illuminate\Support\Facades\Date;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 
 class CatalogoController extends Controller
 {
@@ -46,10 +48,12 @@ class CatalogoController extends Controller
 
         return redirect("/dashboard");
     }
-
+    public function updatearchive(Request $request,$id){
+        
+        
+    }
     // aqui recibimos el id  a eliminar de la table
-    public function destroy($id)
-    {
+    public function destroy($id){
         // aqui se recibi el id a eliminar
         $producto = Catalogo::findOrFail($id);
         $producto->delete();
@@ -58,8 +62,7 @@ class CatalogoController extends Controller
             'message' => 'Producto eliminado correctamente'
         ]);
     }
-    public function edit($id)
-    {
+    public function edit($id) {
         // aqui se recibi el id a editar
         $producto = Catalogo::findOrFail($id);
         //    dd($producto);
@@ -69,8 +72,7 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function signature()
-    {
+    public function signature(){
         // Por si acaso, para la firma se necesita generar el timestamp y enviarlo al front, esto por seguridad de que no vayan a usar una firma antigua
         $timestamp = time();
         $params_to_sign = [
@@ -88,8 +90,7 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function fillFiles($type)
-    {
+    public function fillFiles($type){
         $query = Catalogo::where("type_post", $type)->paginate(20);
 
         if ($query->isEmpty()) {
