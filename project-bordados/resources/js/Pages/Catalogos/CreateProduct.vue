@@ -5,6 +5,7 @@ import { router } from '@inertiajs/vue3'
 import Dropzone from '@/Components/Dropzone.vue'
 import axios from 'axios'
 import { route } from 'ziggy-js'
+import InputError from '@/Components/InputError.vue'
 
 
 const archivo = ref(null)
@@ -122,7 +123,7 @@ onMounted(() => {
                         <label class="block text-gray-700">Título</label>
                         <input v-model="form.titulo" name="titulo" type="text" class="w-full border rounded p-2" />
                         <div v-if="errors.titulo">
-                            <p class="text-red-600">{{ errors.titulo }}</p>
+                            <InputError :message="errors.titulo"></InputError>
                         </div>
                     </div>
 
@@ -132,7 +133,7 @@ onMounted(() => {
                         <P><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo asegurese que no supere las 100 MB.</P>
                         <Dropzone @files="filesU"></Dropzone>
                         <div v-if="errors.archivo">
-                            <p class="text-red-600">{{ errors.archivo }}</p>
+                            <InputError :message="errors.archivo"></InputError>
                         </div>
                     </div>
 
@@ -141,7 +142,7 @@ onMounted(() => {
                         <textarea v-model="form.descripcion" name="descripcion"
                             class="w-full border rounded p-2"></textarea>
                         <div v-if="errors.descripcion">
-                            <p class="text-red-600">{{ errors.descripcion }}</p>
+                            <InputError :message="errors.descripcion"></InputError>
                         </div>
                     </div>
 

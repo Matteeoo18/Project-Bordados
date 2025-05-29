@@ -1,4 +1,5 @@
 <script setup>
+import ButtonReload from './ButtonReload.vue';
 import { onMounted, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -55,9 +56,14 @@ const editarProducto = (id) => {
 const fillFiles = () => {
     //Aca se realizara el envio a la ruta para filtrar los archivos.
     axios.get(route('catalogo.fillFiles', { type: sFillFiles.value })).then(res => {
-        localProps.value = res.data.productosFill        
+        localProps.value = res.data.productosFill;
+        mensaje.value = res.data.message
+        tipoMensaje.value = 'success'     
+        setTimeout(() => {
+            mensaje.value = '';
+        }, 3000);
     }).catch(err => {
-        mensaje.value = 'Ocurrió un error al eliminar el producto';
+        mensaje.value = 'Error al momento de filtrar los archivos';
         tipoMensaje.value = 'error'
 
         // Limpiamos el mensaje después de 3 segundos
@@ -76,6 +82,9 @@ const fillFiles = () => {
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Lista de Productos</h2>
                 <div class="flex items-center space-x-4">
+                    <div>
+                        <button-reload :link="'dashboard'"></button-reload>
+                    </div>
                     <div>
                         <label for="fillstatus">Filtrar archivos:</label>
                         <select id="fillstatus" v-model="sFillFiles" @change="fillFiles"
