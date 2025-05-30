@@ -23,8 +23,14 @@ const actualizarProducto = () => {
     formData.append('descripcion_post', descripcion.value)
 
     // Si hay un archivo nuevo, se incluye
-    if (archivo.value) {
-        formData.append('enlace_post', archivo.value)
+    if (archivo.value) { 
+        if((archivo.value.size/1048576)<100){ //Aqui se esta evaluando que el tamaño sea menor a 100 megas, se dvide entre 1048576 porque el valor esta en bytes (Lo pasamos a MB)
+            console.log("Si se puede enviar el archivo");
+            formData.append('enlace_post', archivo.value)
+        }else{
+            alert("El tamaño del archivo excede las 100 MB, no lo podemos enviar.");
+        }
+
     } else {
         // Si no hay archivo nuevo, puedes enviar la URL existente si lo necesitas
         formData.append('enlace_post', enlace.value)

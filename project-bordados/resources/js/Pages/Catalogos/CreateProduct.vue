@@ -72,20 +72,25 @@ const sendCloudinary = () => {
     // console.log(archivo.value);
 
     loading.value = true
-
+    //Importante agregar sweetalerts si es posible o un formato para mejorar la notificación de errores.
     if (archivo.value !== null) {
-        const formData = new FormData()
-        formData.append('file', archivo.value)
-        formData.append('upload_preset', cloudData.uplpreset)
-        formData.append('tags', form.titulo + " " + tag.value)
-
-        axios.post(url, formData).then(res => {
-            crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0], res.data.resource_type)
-        }).catch(error => {
-            console.error('Error al hacer la petición:', error.data)
-            errors.value.archivo = "No se ha podido almacenar el archivo, asegurese que el tamaño no supere 100 MB."
+        if((archivo.value/1048576)<100){
+            const formData = new FormData()
+            formData.append('file', archivo.value)
+            formData.append('upload_preset', cloudData.uplpreset)
+            formData.append('tags', form.titulo + " " + tag.value)
+    
+            axios.post(url, formData).then(res => {
+                crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0], res.data.resource_type)
+            }).catch(error => {
+                console.error('Error al hacer la petición:', error.data)
+                errors.value.archivo = "No se ha podido almacenar el archivo, verifique el tipo de archivo y su tamaño."
+                loading.value = false
+            })
+        }else{
+            errors.value.archivo = "El archivo es demasiado grande (más de 100 MB). Verifique y reenvíe, por favor."
             loading.value = false
-        })
+        }
     } else {
         errors.value.archivo = "Se debe de agregar un archivo de imágen o video."
         loading.value = false
@@ -116,6 +121,9 @@ onMounted(() => {
         <div class="py-12">
             <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
                 <h2 class="text-2xl font-bold mb-4">Crear Producto</h2>
+                <div v-if="errors.general">
+                    <InputError :message="errors.general"></InputError>
+                </div>
 
                 <form @submit.prevent="sendCloudinary" class="space-y-4">
                     <div>
@@ -129,7 +137,8 @@ onMounted(() => {
                     <div>
                         <label class="block text-gray-700">Imagen o video</label>
                         <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
-                        <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo asegurese que no supere las 100 MB.</p>
+                        <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
+                            asegurese que no supere las 100 MB.</p>
                         <Dropzone @files="filesU"></Dropzone>
                         <div v-if="errors.archivo">
                             <InputError :message="errors.archivo"></InputError>

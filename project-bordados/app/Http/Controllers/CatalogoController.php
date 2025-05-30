@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Validation\ValidationException;
 use Illuminate\Container\Attributes\Auth;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 // importamos inertia para usarlo en el controlador
 use App\Models\Catalogo;
@@ -36,17 +38,26 @@ class CatalogoController extends Controller
         //     'campos' => $request->all(),
         //     'archivo' => $request->file('archivo')
         // ]);
-        Catalogo::create([
-            "titulo_post" => $request->input("titulo"),
-            "enlace_post" => $request->input("enlace_post"),
-            "descripcion_post" => $request->input("descripcion"),
-            "public_id" => $request->input("public_id"),
-            "tag_post" => $request->input("tag_post"),
-            "type_post" => $request->input("type_post"),
-            "id_usuario" => Auth()->user()->id,
-        ]);
+        try{
+            $catalogo = Catalogo::create([
+                "titulo_post" => $request->input("titulo"),
+                "enlace_post" => $request->input("enlace_post"),
+                "descripcion_post" => $request->input("descripcion"),
+                "public_id" => $request->input("public_id"),
+                "tag_post" => $request->input("tag_post"),
+                "type_post" => $request->input("type_post"),
+                "id_usuario" => Auth()->user()->id,
+            ]);
+    
+            if($catalogo){
+                return redirect()->route("/dashboard");
+            }else{
+               throw ValidationException::withMessages(["general"=>"Se presentó un problema al momento de almacenar los datos"]);
+            }
+        }catch(QueryException $e){
+            throw ValidationException::withMessages(["general"=>"Se presentó un problema al momento de almacenar los datos"]);
+        }
 
-        return redirect("/dashboard");
     }
     public function updatearchive(Request $request,$id){
         
