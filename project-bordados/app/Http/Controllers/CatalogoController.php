@@ -28,8 +28,7 @@ class CatalogoController extends Controller
     {
         return Inertia::render('Catalogos/CreateProduct');
     }
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'titulo' => 'required|string|max:50',
             'descripcion' => 'required|string',
@@ -50,7 +49,7 @@ class CatalogoController extends Controller
             ]);
     
             if($catalogo){
-                return redirect()->route("/dashboard");
+                return redirect("/dashboard");
             }else{
                throw ValidationException::withMessages(["general"=>"Se presentó un problema al momento de almacenar los datos"]);
             }
@@ -60,8 +59,10 @@ class CatalogoController extends Controller
 
     }
     public function updatearchive(Request $request,$id){
-        
-        
+        dd(
+            $request->all(),
+            $id
+        );
     }
     // aqui recibimos el id  a eliminar de la table
     public function destroy($id){

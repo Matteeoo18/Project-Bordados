@@ -9,42 +9,58 @@ const props = defineProps({
     producto: Object,
 })
 
-// Variables reactivas con los valores actuales del producto
+// Constantes
+const BYTES_IN_MB = 1048576
+const MAX_MB = 40
+
+// Estado reactivo
 const titulo = ref(props.producto.titulo_post)
 const enlace = ref(props.producto.enlace_post)
 const descripcion = ref(props.producto.descripcion_post)
 const archivo = ref(null)
+const errorArchivo = ref('')
+const cargando = ref(false)
 
-// Función para actualizar el producto
+// Validar tamaño
+const validarArchivo = (file) => {
+    const sizeInMB = file.size / BYTES_IN_MB
+    if (sizeInMB > MAX_MB) {
+        errorArchivo.value = `❌ El archivo pesa ${sizeInMB.toFixed(2)} MB. Límite: ${MAX_MB} MB.`
+        return false
+    }
+    errorArchivo.value = ''
+    return true
+}
+
+// Subida
 const actualizarProducto = () => {
-    const formData = new FormData()
+    if (cargando.value) return
+    cargando.value = true
 
+    const formData = new FormData()
     formData.append('titulo_post', titulo.value)
     formData.append('descripcion_post', descripcion.value)
 
-    // Si hay un archivo nuevo, se incluye
-    if (archivo.value) { 
-        if((archivo.value.size/1048576)<100){ //Aqui se esta evaluando que el tamaño sea menor a 100 megas, se dvide entre 1048576 porque el valor esta en bytes (Lo pasamos a MB)
-            console.log("Si se puede enviar el archivo");
-            formData.append('enlace_post', archivo.value)
-        }else{
-            alert("El tamaño del archivo excede las 100 MB, no lo podemos enviar.");
+    if (archivo.value) {
+        if (!validarArchivo(archivo.value)) {
+            cargando.value = false
+            return
         }
-
+        formData.append('enlace_post', archivo.value)
     } else {
-        // Si no hay archivo nuevo, puedes enviar la URL existente si lo necesitas
         formData.append('enlace_post', enlace.value)
     }
-    // para mirar si estamos enviando los datos correctamente
-    // for (let [key, value] of formData.entries()) {
-    //     console.log(`${key}:`, value)
-    // }
+
     router.post(route('catalogo.update', props.producto.id), formData, {
-        forceFormData: true, // Inertia lo requiere para que no serialice como JSON
+        forceFormData: true,
         preserveScroll: true,
+        onFinish: () => {
+            cargando.value = false
+        }
     })
 }
 
+// Recibir archivos del dropzone
 const filesU = (files) => {
     archivo.value = files[0]
 }
@@ -102,12 +118,10 @@ const filePreview = computed(() => {
 
                     <div>
                         <label class="block text-gray-700">Imagen o video</label>
-                        <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
                         <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
                             asegurese que no
                             supere las 100 MB.</p>
                         <Dropzone @files="filesU"></Dropzone>
-
                     </div>
 
                     <div>
@@ -115,8 +129,10 @@ const filePreview = computed(() => {
                         <textarea v-model="descripcion" class="w-full border rounded p-2"></textarea>
                     </div>
 
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                        Actualizar
+                    <p v-if="errorArchivo" class="text-red-600 text-sm">{{ errorArchivo }}</p>
+
+                    <button :disabled="cargando" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        {{ cargando ? 'Actualizando...' : 'Actualizar' }}
                     </button>
                 </form>
             </div>

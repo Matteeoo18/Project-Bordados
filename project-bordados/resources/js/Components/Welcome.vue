@@ -1,6 +1,6 @@
 <script setup>
 import ButtonReload from './ButtonReload.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref ,computed} from 'vue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { route } from 'ziggy-js';
@@ -14,7 +14,8 @@ const props = defineProps({
 const mensaje = ref('');
 const tipoMensaje = ref('success'); // 'success' o 'error'
 const sFillFiles = ref('');
-const localProps = ref(props.productos);
+const productosFiltrados = ref(null);
+const localProps = computed(() => props.productos);
 //funcion para crear el producto
 const crearProducto = () => {
     // Redirigir a la página de creación del producto con route
@@ -30,7 +31,6 @@ const eliminarProducto = (id) => {
 
             // Recargamos solo la data de productos (no toda la página)
             router.reload({ only: ['productos'] });
-
             // Limpiamos el mensaje después de 3 segundos
             setTimeout(() => {
                 mensaje.value = '';
@@ -56,7 +56,7 @@ const editarProducto = (id) => {
 const fillFiles = () => {
     //Aca se realizara el envio a la ruta para filtrar los archivos.
     axios.get(route('catalogo.fillFiles', { type: sFillFiles.value })).then(res => {
-        localProps.value = res.data.productosFill;
+        productosFiltrados.value = res.data.productosFill;
         mensaje.value = res.data.message
         tipoMensaje.value = 'success'     
         setTimeout(() => {
@@ -122,7 +122,7 @@ const fillFiles = () => {
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="producto in localProps.data" :key="producto.id">
+                    <tr v-for="producto in (productosFiltrados || localProps).data" :key="producto.id">
                         <td class="px-6 py-4">
                             <img :src="producto.enlace_post" alt="Producto" class="w-10 h-10 rounded" />
                         </td>

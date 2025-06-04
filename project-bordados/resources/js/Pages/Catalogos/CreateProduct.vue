@@ -74,7 +74,7 @@ const sendCloudinary = () => {
     loading.value = true
     //Importante agregar sweetalerts si es posible o un formato para mejorar la notificación de errores.
     if (archivo.value !== null) {
-        if((archivo.value/1048576)<100){
+        if((archivo.value.size/1048576)<100){
             const formData = new FormData()
             formData.append('file', archivo.value)
             formData.append('upload_preset', cloudData.uplpreset)
