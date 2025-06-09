@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import Dropzone from '@/Components/Dropzone.vue'
+import Dropzone from '@/Components/Dropzone2.vue'
 
 // Accedemos a las props
 const props = defineProps({
@@ -121,7 +121,7 @@ const filePreview = computed(() => {
                         <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
                             asegurese que no
                             supere las 100 MB.</p>
-                        <Dropzone @files="filesU"></Dropzone>
+                        <Dropzone></Dropzone>
                     </div>
 
                     <div>

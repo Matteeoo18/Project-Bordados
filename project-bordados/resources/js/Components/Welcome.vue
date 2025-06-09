@@ -15,7 +15,6 @@ const mensaje = ref('');
 const tipoMensaje = ref('success'); // 'success' o 'error'
 const sFillFiles = ref('');
 const productosFiltrados = ref(null);
-const localProps = computed(() => props.productos);
 //funcion para crear el producto
 const crearProducto = () => {
     // Redirigir a la página de creación del producto con route
@@ -122,7 +121,7 @@ const fillFiles = () => {
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="producto in (productosFiltrados || localProps).data" :key="producto.id">
+                    <tr v-for="producto in (productosFiltrados || props.productos).data" :key="producto.id">
                         <td class="px-6 py-4">
                             <img :src="producto.enlace_post" alt="Producto" class="w-10 h-10 rounded" />
                         </td>
@@ -139,7 +138,7 @@ const fillFiles = () => {
                 </tbody>
             </table>
             <div class="mt-4 flex justify-center gap-2">
-                <button v-for="link in localProps.links" :key="link.label" @click="link.url && router.visit(link.url)"
+                <button v-for="link in props.productos.links" :key="link.label" @click="link.url && router.visit(link.url)"
                     :disabled="!link.url" v-html="link.label" :class="[
                         'px-3 py-1 rounded',
                         link.active ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700',
