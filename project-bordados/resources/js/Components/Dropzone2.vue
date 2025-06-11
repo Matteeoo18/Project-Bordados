@@ -1,8 +1,6 @@
 <template>
 
   <form id="my-dropzone" class="dropzone">
-
-
   </form>
 </template>
 
@@ -10,6 +8,7 @@
 <script setup>
 import Dropzone from "dropzone";
 import 'dropzone/dist/dropzone.css';
+
 import { onMounted } from "vue";
 
 onMounted(() => {
@@ -18,7 +17,7 @@ onMounted(() => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   const myDropzone = new Dropzone("#my-dropzone", {
-    url: "/catalogo/update", //Se debe de cambiar la ruta
+    url: route('upload.archivo'),
     acceptedFiles: "image/*, video/*",
     headers: {
       'X-CSRF-TOKEN': csrfToken,
@@ -28,6 +27,7 @@ onMounted(() => {
     retryChunks: true, // Se usa por si un chunk falla se vuelva a intentar
     method: 'put',
     maxFilesize: 1 * 1024 * 1024,
+    paramName:'archivo'
   });
 
   myDropzone.on("error",(file, errorMessage, xhr)=> {

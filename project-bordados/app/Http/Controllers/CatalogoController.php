@@ -127,14 +127,4 @@ class CatalogoController extends Controller
             'message' => 'Se han filtrado los archivos (' . $type . ') correctamente'
         ]);
     }
-
-
-
-    //Funcion de ensayo para realizar el envio de la imgen y eso.
-    public function ensayo(Request $request )
-    {
-        if($request->all()){
-            dd($request); //No se le puede hacer dd() al archivo que viene del front con Dropzone.js
-        }
-    }
 }
