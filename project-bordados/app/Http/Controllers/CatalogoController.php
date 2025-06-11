@@ -23,11 +23,19 @@ class CatalogoController extends Controller
         ]);
     }
 
-
+    /**
+     * Summary of create
+     * @return \Inertia\Response
+     */
     public function create()
     {
         return Inertia::render('Catalogos/CreateProduct');
     }
+    /**
+     * Función para almacenar las imagenes y productos.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request) {
         $request->validate([
             'titulo' => 'required|string|max:50',
@@ -64,6 +72,17 @@ class CatalogoController extends Controller
             $id
         );
     }
+    
+    public function edit($id) {
+        // aqui se recibi el id a editar
+        $producto = Catalogo::findOrFail($id);
+        //    dd($producto);
+        // redireccionamos a la vista de index
+        return Inertia::render('Catalogos/EditProduct', [
+            'producto' => $producto
+        ]);
+    }
+
     // aqui recibimos el id  a eliminar de la table
     public function destroy($id){
         // aqui se recibi el id a eliminar
@@ -72,15 +91,6 @@ class CatalogoController extends Controller
         // redireccionamos a la vista de index
         return response()->json([
             'message' => 'Producto eliminado correctamente'
-        ]);
-    }
-    public function edit($id) {
-        // aqui se recibi el id a editar
-        $producto = Catalogo::findOrFail($id);
-        //    dd($producto);
-        // redireccionamos a la vista de index
-        return Inertia::render('Catalogos/EditProduct', [
-            'producto' => $producto
         ]);
     }
 
@@ -116,5 +126,15 @@ class CatalogoController extends Controller
             'productosFill' => $query,
             'message' => 'Se han filtrado los archivos (' . $type . ') correctamente'
         ]);
+    }
+
+
+
+    //Funcion de ensayo para realizar el envio de la imgen y eso.
+    public function ensayo(Request $request )
+    {
+        if($request->all()){
+            dd($request); //No se le puede hacer dd() al archivo que viene del front con Dropzone.js
+        }
     }
 }

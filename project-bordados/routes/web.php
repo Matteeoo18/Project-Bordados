@@ -37,11 +37,13 @@ Route::middleware([
     Route::get('/catalogo/create', [CatalogoController::class, 'create'])->name('catalogo.create');
     // aqui se recibi el id a eliminar
     Route::post('/catalogo/store', [CatalogoController::class, 'store'])->name('catalogo.store');
-    Route::delete('/catalogo/update/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+    Route::delete('/catalogo/{id}', [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
     Route::post('/catalogo/{id}', [CatalogoController::class, 'updatearchive'])->name('catalogo.update');
     Route::get('/edit/{id}', [CatalogoController::class, 'edit'])->name('catalogo.edit');
     //Ruta para filtrar los archivos de imagen y video.
     Route::get("/fillFiles/{type}", [CatalogoController::class,'fillFiles'])->name('catalogo.fillFiles');
     //Ruta para enviar al front la firma del cloudniary 
     Route::get('/cloudinary-signature',[CatalogoController::class,'signature'])->name('catalogo.signature');
+    //Ruta de ensayo para el envio de la imagen al back
+    Route::put("/catalogo/update", [CatalogoController::class, 'ensayo'])->name('catalogo.ensayo');
 });
