@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { reactive, ref, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import Dropzone from '@/Components/Dropzone.vue'
+import Dropzone from '@/Components/DropzoneJS.vue'
 import axios from 'axios'
 import { route } from 'ziggy-js'
 import InputError from '@/Components/InputError.vue'
@@ -27,7 +27,8 @@ const cloudData = reactive({
 })
 
 const filesU = (files) => {
-    archivo.value = files[0]
+    archivo.value = files
+    console.log(archivo.value);
 }
 
 //  Enviar formulario con Inertia 
@@ -73,7 +74,7 @@ const sendCloudinary = () => {
 
     loading.value = true
     //Importante agregar sweetalerts si es posible o un formato para mejorar la notificación de errores.
-    if (archivo.value !== null) {
+    if (archivo.value !== null && validator(form.titulo) && validator(form.descripcion)) {  //Se utiliza la funcion validator para verificar que ambos tengan valores correctos.
         if((archivo.value.size/1048576)<100){
             const formData = new FormData()
             formData.append('file', archivo.value)
@@ -97,7 +98,14 @@ const sendCloudinary = () => {
     }
 }
 
+const validator = (campo) =>{
+    if (campo == ""){
+        errors.value.general = "Los campos título y descripción son obligatorios, por favor verificar."
+        return false
+    }
 
+    return true
+}
 
 //Funcion para llamar la ruta de signature
 const getSignature = () => {
@@ -127,7 +135,7 @@ onMounted(() => {
 
                 <form @submit.prevent="sendCloudinary" class="space-y-4">
                     <div>
-                        <label class="block text-gray-700">Título</label>
+                        <label class="block text-gray-700">Título <span class="text-red-600">*</span></label>
                         <input v-model="form.titulo" name="titulo" type="text" class="w-full border rounded p-2" />
                         <div v-if="errors.titulo">
                             <InputError :message="errors.titulo"></InputError>
@@ -135,17 +143,17 @@ onMounted(() => {
                     </div>
 
                     <div>
-                        <label class="block text-gray-700">Imagen o video</label>
+                        <label class="block text-gray-700">Imagen o video<span class="text-red-600">*</span></label>
                         <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
                         <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
                             asegurese que no supere las 100 MB.</p>
-                        <Dropzone @files="filesU"></Dropzone>
+                        <Dropzone @file="filesU"></Dropzone>
                         <div v-if="errors.archivo">
                             <InputError :message="errors.archivo"></InputError>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-gray-700">Descripción</label>
+                        <label class="block text-gray-700">Descripción<span class="text-red-600">*</span></label>
                         <textarea v-model="form.descripcion" name="descripcion"
                             class="w-full border rounded p-2"></textarea>
                         <div v-if="errors.descripcion">

@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import Dropzone from '@/Components/Dropzone2.vue'
+import Dropzone from '@/Components/DropzoneJS.vue'
 
 // Accedemos a las props
 const props = defineProps({

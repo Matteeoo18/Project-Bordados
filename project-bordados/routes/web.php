@@ -44,13 +44,7 @@ Route::middleware([
     //Ruta para filtrar los archivos de imagen y video.
     Route::get("/fillFiles/{type}", [CatalogoController::class, 'fillFiles'])->name('catalogo.fillFiles');
     //Ruta para enviar al front la firma del cloudniary 
-<<<<<<< HEAD
-    Route::get('/cloudinary-signature',[CatalogoController::class,'signature'])->name('catalogo.signature');
-    //Ruta de ensayo para el envio de la imagen al back
-    Route::put("/catalogo/update", [CatalogoController::class, 'ensayo'])->name('catalogo.ensayo');
-=======
     Route::get('/cloudinary-signature', [CatalogoController::class, 'signature'])->name('catalogo.signature');
     // Esta ruta es para el Dropzone
     Route::post('/dropzone', DropzoneController::class)->name('upload.archivo');
->>>>>>> Aricapa
 });
