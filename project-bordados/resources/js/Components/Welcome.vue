@@ -1,16 +1,20 @@
 <script setup>
-import { ref } from 'vue';
+import ButtonReload from './ButtonReload.vue';
+import { onMounted, ref ,computed} from 'vue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
+import { route } from 'ziggy-js';
 
 // importamos inertia para poder usarlo
 // Props que vienen desde Laravel
-defineProps({
+const props = defineProps({
     productos: Object,
 });
 
 const mensaje = ref('');
 const tipoMensaje = ref('success'); // 'success' o 'error'
+const sFillFiles = ref('');
+const productosFiltrados = ref(null);
 //funcion para crear el producto
 const crearProducto = () => {
     // Redirigir a la página de creación del producto con route
@@ -26,7 +30,6 @@ const eliminarProducto = (id) => {
 
             // Recargamos solo la data de productos (no toda la página)
             router.reload({ only: ['productos'] });
-
             // Limpiamos el mensaje después de 3 segundos
             setTimeout(() => {
                 mensaje.value = '';
@@ -48,6 +51,27 @@ const editarProducto = (id) => {
     // Redirigir a la página de edición del producto con route
     router.visit(route('catalogo.edit', { id }));
 }
+
+const fillFiles = () => {
+    //Aca se realizara el envio a la ruta para filtrar los archivos.
+    axios.get(route('catalogo.fillFiles', { type: sFillFiles.value })).then(res => {
+        productosFiltrados.value = res.data.productosFill;
+        mensaje.value = res.data.message
+        tipoMensaje.value = 'success'     
+        setTimeout(() => {
+            mensaje.value = '';
+        }, 3000);
+    }).catch(err => {
+        mensaje.value = 'Error al momento de filtrar los archivos';
+        tipoMensaje.value = 'error'
+
+        // Limpiamos el mensaje después de 3 segundos
+        setTimeout(() => {
+            mensaje.value = '';
+        }, 3000);
+    });
+}
+
 </script>
 
 <template>
@@ -56,10 +80,24 @@ const editarProducto = (id) => {
             <!-- Creamos el boton de crear producto -->
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Lista de Productos</h2>
-                <button @click="crearProducto"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    Crear Producto
-                </button>
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <button-reload :link="'dashboard'"></button-reload>
+                    </div>
+                    <div>
+                        <label for="fillstatus">Filtrar archivos:</label>
+                        <select id="fillstatus" v-model="sFillFiles" @change="fillFiles"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option disabled>Seleccione una opción</option>
+                            <option value="image">Imagenes</option>
+                            <option value="video">Videos</option>
+                        </select>
+                    </div>
+                    <button @click="crearProducto"
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Crear Producto
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -83,7 +121,7 @@ const editarProducto = (id) => {
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="producto in productos.data" :key="producto.id">
+                    <tr v-for="producto in (productosFiltrados || props.productos).data" :key="producto.id">
                         <td class="px-6 py-4">
                             <img :src="producto.enlace_post" alt="Producto" class="w-10 h-10 rounded" />
                         </td>
@@ -100,7 +138,7 @@ const editarProducto = (id) => {
                 </tbody>
             </table>
             <div class="mt-4 flex justify-center gap-2">
-                <button v-for="link in productos.links" :key="link.label" @click="link.url && router.visit(link.url)"
+                <button v-for="link in props.productos.links" :key="link.label" @click="link.url && router.visit(link.url)"
                     :disabled="!link.url" v-html="link.label" :class="[
                         'px-3 py-1 rounded',
                         link.active ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700',

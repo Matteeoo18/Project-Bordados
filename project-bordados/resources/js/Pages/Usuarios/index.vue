@@ -18,9 +18,7 @@
                             <button class="bg-indigo-600 p-2 text-white text-sm mt-1 rounded-lg ms-1 me-4"
                                 @click="filtrarUsuarios"><i class="fa fa-search" aria-hidden="true"></i>
                             </button>
-                            <button class="bg-indigo-600 p-2 text-white text-sm mt-1 rounded-lg"
-                                @click="limpiarFills"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-
+                            <button-reload :link="'usuarios.index'"></button-reload>
                             <div class="columns-2">
                                 <label for="fillstatus">Filtrar usuarios:</label>
                                 <select id="fillstatus" v-model="sFillStatus" @change="filtrarUsuarios"
@@ -83,16 +81,19 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import ButtonReload from '@/Components/ButtonReload.vue';
 import { route } from 'ziggy-js';
 import { defineComponent } from 'vue';
 import axios from 'axios';
+
 
 export default defineComponent({
     props: {
         usuarios: Object
     },
     components: {
-        AppLayout
+        AppLayout,
+        ButtonReload
     },
     data() {
         return {
@@ -131,9 +132,6 @@ export default defineComponent({
                     this.showMessage()
                 })
             }
-        },
-        limpiarFills() {
-            this.$inertia.get(route("usuarios.index"));
         },
         updateUserStatus(id) {
             axios.put(route('usuarios.updateStatus', { id }), { 'status': false }).then(res => {

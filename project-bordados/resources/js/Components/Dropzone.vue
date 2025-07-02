@@ -75,6 +75,7 @@
     multiple: false,
     onDrop,
     accept: 'image/*,.mp4,.webm,.avi'
+    
   })
 
   const {
