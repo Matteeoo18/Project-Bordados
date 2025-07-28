@@ -1,127 +1,75 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Dropzone from '@/Components/DropzoneJS.vue'
-import axios from 'axios'
 import { route } from 'ziggy-js'
 import InputError from '@/Components/InputError.vue'
-
 
 const archivo = ref(null)
 const tag = ref('bordado')
 const errors = ref({})
 const loading = ref(false)
-// Definir formulario reactivo
+
 const form = reactive({
     titulo: '',
     descripcion: ''
 })
 
-const cloudData = reactive({
-    //signature: '', Por el momento no se necesita
-    //timestamp: '', Por el momento no se necesita
-    uplpreset: '',
-    //apik: '', Por el momento no se necesita
-    cloudName: ''
-})
 
-const filesU = (files) => {
-    archivo.value = files
-    console.log(archivo.value);
+const filesU = (fileData) => {
+    archivo.value = fileData
+    if (fileData) {
+        console.log("Archivo completo:", archivo.value)
+    } else {
+        console.log("Archivo eliminado, archivo.value ahora es:", archivo.value)
+    }
 }
 
-//  Enviar formulario con Inertia 
-const crearProducto = (url, publicId, tag, res_type) => {
-    // console.log(form);
-    const formData = new FormData()
-    formData.append('titulo', form.titulo)
-    formData.append('descripcion', form.descripcion)
-    formData.append('enlace_post', url)
-    formData.append('public_id', publicId)
-    formData.append('tag_post', tag)
-    formData.append('type_post', res_type)
-    // console.log(formData);
+// Validación simple
+const validator = () => {
+    let valido = true
+    errors.value.general = ''
 
-    // Enviar el formulario usando Inertia
+    if (form.titulo.trim() === '' || form.descripcion.trim() === '') {
+        errors.value.general = 'Los campos título y descripción son obligatorios'
+        valido = false
+    }
+
+    if (!archivo.value) {
+        errors.value.archivo = 'Se debe cargar un archivo.'
+        valido = false
+    }
+
+    return valido
+}
+
+// Enviar datos al backend (ya con archivo previamente subido por Dropzone)
+const crearProducto = () => {
+    if (!validator()) return;
+
+    const formData = new FormData();
+    formData.append('titulo', form.titulo);
+    formData.append('descripcion', form.descripcion);
+    formData.append('ruta', archivo.value.ruta);
+    formData.append('nombre', archivo.value.nombre);
+    formData.append('mime', archivo.value.mime);
+
     router.post(route('catalogo.store'), formData, {
-        forceFormData: true, // Asegura que se envíe como multipart/form-data
+        forceFormData: true,
         onError: (err) => {
-            errors.value = err
-            loading.value = true
+            errors.value = err;
+            loading.value = false;
         },
         onFinish: () => {
-            // Limpiar el formulario después de enviar
-            form.titulo = ''
-            form.descripcion = ''
-            form.archivo = null
-            loading.value = false
+            form.titulo = '';
+            form.descripcion = '';
+            archivo.value = null;
+            loading.value = false;
         },
+    });
+};
 
-    })
-}
-
-//Se envia la imagen directamente a cloudinary y en la respuesta se llama la función para enviar al back (catalogo.store)
-const sendCloudinary = () => {
-    const url = `https://api.cloudinary.com/v1_1/${cloudData.cloudName}/upload`
-
-    errors.value = {
-        ...errors.value,
-        archivo: ""
-    }
-
-    // console.log(archivo.value);
-
-    loading.value = true
-    //Importante agregar sweetalerts si es posible o un formato para mejorar la notificación de errores.
-    if (archivo.value !== null && validator(form.titulo) && validator(form.descripcion)) {  //Se utiliza la funcion validator para verificar que ambos tengan valores correctos.
-        if((archivo.value.size/1048576)<100){
-            const formData = new FormData()
-            formData.append('file', archivo.value)
-            formData.append('upload_preset', cloudData.uplpreset)
-            formData.append('tags', form.titulo + " " + tag.value)
-    
-            axios.post(url, formData).then(res => {
-                crearProducto(res.data.secure_url, res.data.public_id, res.data.tags[0], res.data.resource_type)
-            }).catch(error => {
-                console.error('Error al hacer la petición:', error.data)
-                errors.value.archivo = "No se ha podido almacenar el archivo, verifique el tipo de archivo y su tamaño."
-                loading.value = false
-            })
-        }else{
-            errors.value.archivo = "El archivo es demasiado grande (más de 100 MB). Verifique y reenvíe, por favor."
-            loading.value = false
-        }
-    } else {
-        errors.value.archivo = "Se debe de agregar un archivo de imágen o video."
-        loading.value = false
-    }
-}
-
-const validator = (campo) =>{
-    if (campo == ""){
-        errors.value.general = "Los campos título y descripción son obligatorios, por favor verificar."
-        return false
-    }
-
-    return true
-}
-
-//Funcion para llamar la ruta de signature
-const getSignature = () => {
-    axios.get(route('catalogo.signature')).then(res => {
-        // console.log(res.data)
-        cloudData.uplpreset = res.data.upload_preset //Este es el  nombre para realizar los cambios en cloudinary
-        cloudData.cloudName = res.data.cloud_name //Nombre del usuario, es con el que se identifica para poder hacer la subida de imagnes
-    }).catch(error => {
-        console.error('Error al hacer la petición:', error)
-    })
-}
-
-
-onMounted(() => {
-    getSignature()
-})
 </script>
 
 <template>
@@ -129,11 +77,12 @@ onMounted(() => {
         <div class="py-12">
             <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
                 <h2 class="text-2xl font-bold mb-4">Crear Producto</h2>
+
                 <div v-if="errors.general">
                     <InputError :message="errors.general"></InputError>
                 </div>
 
-                <form @submit.prevent="sendCloudinary" class="space-y-4">
+                <form @submit.prevent="crearProducto" class="space-y-4">
                     <div>
                         <label class="block text-gray-700">Título <span class="text-red-600">*</span></label>
                         <input v-model="form.titulo" name="titulo" type="text" class="w-full border rounded p-2" />
@@ -144,16 +93,16 @@ onMounted(() => {
 
                     <div>
                         <label class="block text-gray-700">Imagen o video<span class="text-red-600">*</span></label>
-                        <!-- <input type="file" accept="image/*,video/*" @change="select_file" class="w-full border rounded p-2" /> -->
-                        <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
-                            asegurese que no supere las 100 MB.</p>
+                        <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>asegúrate de que no supere los
+                            100 MB.</p>
                         <Dropzone @file="filesU"></Dropzone>
                         <div v-if="errors.archivo">
                             <InputError :message="errors.archivo"></InputError>
                         </div>
                     </div>
+
                     <div>
-                        <label class="block text-gray-700">Descripción<span class="text-red-600">*</span></label>
+                        <label class="block text-gray-700">Descripción <span class="text-red-600">*</span></label>
                         <textarea v-model="form.descripcion" name="descripcion"
                             class="w-full border rounded p-2"></textarea>
                         <div v-if="errors.descripcion">

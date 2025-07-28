@@ -7,13 +7,13 @@ use Illuminate\Http\UploadedFile;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
-
+use Illuminate\Support\Facades\File; // Asegúrate de importar esto
 class DropzoneController extends Controller
 {
     public function __invoke(Request $request)
     {
-       
- 
+
+
         // create the file receiver
         $receiver = new FileReceiver($request->archivo, $request, HandlerFactory::classFromRequest($request));
 
@@ -46,7 +46,7 @@ class DropzoneController extends Controller
     {
         $fileName = $file->getClientOriginalName();
         // Group files by mime type
-        $mime = str_replace('/', '-', $file->getMimeType());
+        $mime = $file->getMimeType();
         // Group files by the date (week
         $dateFolder = date("Y-m-W");
 
@@ -63,5 +63,42 @@ class DropzoneController extends Controller
             'name' => $fileName,
             'mime_type' => $mime
         ]);
+    }
+
+    // 🔽 Esta es la nueva función reutilizable que puedes usar en otros controladores
+    public static function obtenerArchivoSubido(Request $request, string $campo = 'archivo'): ?UploadedFile
+    {
+        $receiver = new FileReceiver($campo, $request, HandlerFactory::classFromRequest($request));
+
+        if (!$receiver->isUploaded()) {
+            throw new UploadMissingFileException();
+        }
+
+        $save = $receiver->receive();
+
+        if ($save->isFinished()) {
+            return $save->getFile();
+        }
+
+        return null;
+    }
+    public function eliminarArchivo(Request $request)
+    {
+        $ruta = $request->input('ruta');
+        $nombre = $request->input('nombre');
+
+        if (!$ruta || !$nombre) {
+            return response()->json(['mensaje' => 'Ruta o nombre no proporcionado.'], 400);
+        }
+
+        // Construimos la ruta absoluta en el sistema de archivos
+        $rutaCompleta = storage_path("app/" . $ruta . $nombre);
+
+        if (File::exists($rutaCompleta)) {
+            File::delete($rutaCompleta);
+            return response()->json(['mensaje' => 'Archivo eliminado con éxito.']);
+        }
+
+        return response()->json(['mensaje' => 'El archivo no existe.'], 404);
     }
 }

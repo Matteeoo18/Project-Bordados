@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Validation\ValidationException;
-use Illuminate\Container\Attributes\Auth;
-use Illuminate\Database\QueryException;
+
 use Illuminate\Http\Request;
-// importamos inertia para usarlo en el controlador
 use App\Models\Catalogo;
 use Inertia\Inertia;
 use Cloudinary\Api\ApiUtils;
-use Illuminate\Support\Facades\Date;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use App\Http\Controllers\DropzoneController;
 
 
 class CatalogoController extends Controller
@@ -36,44 +32,35 @@ class CatalogoController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'titulo' => 'required|string|max:50',
             'descripcion' => 'required|string',
+            'ruta' => 'required|string',
+            'nombre' => 'required|string',
+            'mime' => 'required|string',
         ]);
-        // dd([
-        //     'campos' => $request->all(),
-        //     'archivo' => $request->file('archivo')
-        // ]);
-        try{
-            $catalogo = Catalogo::create([
-                "titulo_post" => $request->input("titulo"),
-                "enlace_post" => $request->input("enlace_post"),
-                "descripcion_post" => $request->input("descripcion"),
-                "public_id" => $request->input("public_id"),
-                "tag_post" => $request->input("tag_post"),
-                "type_post" => $request->input("type_post"),
-                "id_usuario" => Auth()->user()->id,
-            ]);
-    
-            if($catalogo){
-                return redirect("/dashboard");
-            }else{
-               throw ValidationException::withMessages(["general"=>"Se presentó un problema al momento de almacenar los datos"]);
-            }
-        }catch(QueryException $e){
-            throw ValidationException::withMessages(["general"=>"Se presentó un problema al momento de almacenar los datos"]);
+
+        // Validamos si el archivo existe físicamente
+        $path = storage_path("app/" . $request->ruta . '/' . $request->nombre);
+        if (!file_exists($path)) {
+            return response()->json(['error' => 'Archivo no encontrado en el servidor'], 404);
         }
 
+        dd("Todo bien", $request->all());
     }
-    public function updatearchive(Request $request,$id){
+
+    public function updatearchive(Request $request, $id)
+    {
         dd(
             $request->all(),
             $id
         );
     }
-    
-    public function edit($id) {
+
+    public function edit($id)
+    {
         // aqui se recibi el id a editar
         $producto = Catalogo::findOrFail($id);
         //    dd($producto);
@@ -84,7 +71,8 @@ class CatalogoController extends Controller
     }
 
     // aqui recibimos el id  a eliminar de la table
-    public function destroy($id){
+    public function destroy($id)
+    {
         // aqui se recibi el id a eliminar
         $producto = Catalogo::findOrFail($id);
         $producto->delete();
@@ -94,7 +82,8 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function signature(){
+    public function signature()
+    {
         // Por si acaso, para la firma se necesita generar el timestamp y enviarlo al front, esto por seguridad de que no vayan a usar una firma antigua
         $timestamp = time();
         $params_to_sign = [
@@ -112,7 +101,8 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function fillFiles($type){
+    public function fillFiles($type)
+    {
         $query = Catalogo::where("type_post", $type)->paginate(20);
 
         if ($query->isEmpty()) {
