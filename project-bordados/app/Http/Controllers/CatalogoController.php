@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Catalogo;
 use Inertia\Inertia;
-use Cloudinary\Api\ApiUtils;
-use App\Http\Controllers\DropzoneController;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 
 
 class CatalogoController extends Controller
@@ -48,7 +48,18 @@ class CatalogoController extends Controller
             return response()->json(['error' => 'Archivo no encontrado en el servidor'], 404);
         }
 
-        dd("Todo bien", $request->all());
+        $obj = Cloudinary::upload($path, ['folder' => 'archivos']);
+        $public_id = $obj->getPublicId();
+        $url = $obj->getSecurePath();
+
+        // Opcional: guardar en DB si lo necesitas
+        // Producto::create([...]);
+
+        dd([
+            'public_id' => $obj->getPublicId(),
+            'url' => $obj->getSecurePath(),
+            'raw_response' => $obj->getResult(), // si quieres ver TODO lo que responde Cloudinary
+        ]);
     }
 
     public function updatearchive(Request $request, $id)
@@ -82,24 +93,6 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function signature()
-    {
-        // Por si acaso, para la firma se necesita generar el timestamp y enviarlo al front, esto por seguridad de que no vayan a usar una firma antigua
-        $timestamp = time();
-        $params_to_sign = [
-            'timestamp' => $timestamp,
-        ];
-
-        $signature = ApiUtils::signParameters($params_to_sign, env('CLOUDINARY_NOTIFICATION_URL'));
-
-        return response()->json([
-            'signature' => $signature,
-            'timestamp' => $timestamp,
-            'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
-            'api_key' => env('CLOUDINARY_API_KEY'),
-            'cloud_name' => env('CLOUDINDARY_NAME'),
-        ]);
-    }
 
     public function fillFiles($type)
     {
