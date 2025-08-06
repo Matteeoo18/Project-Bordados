@@ -96,7 +96,7 @@ class DropzoneController extends Controller
 
         if (File::exists($rutaCompleta)) {
             File::delete($rutaCompleta);
-            return response()->json(['mensaje' => 'Archivo eliminado con éxito.']);
+            return response()->json(['mensaje' => 'Archivo eliminado con éxito.'], 200);
         }
 
         return response()->json(['mensaje' => 'El archivo no existe.'], 404);

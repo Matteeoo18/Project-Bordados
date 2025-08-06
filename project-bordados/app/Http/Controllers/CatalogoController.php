@@ -45,7 +45,7 @@ class CatalogoController extends Controller
         // Validamos si el archivo existe físicamente
         $path = storage_path("app/" . $request->ruta . '/' . $request->nombre);
         if (!file_exists($path)) {
-            return response()->json(['error' => 'Archivo no encontrado en el servidor'], 404);
+                return response()->json(['error' => 'Archivo no encontrado en el servidor'], 404);
         }
 
         $obj = Cloudinary::upload($path, ['folder' => 'archivos']);
@@ -55,11 +55,30 @@ class CatalogoController extends Controller
         // Opcional: guardar en DB si lo necesitas
         // Producto::create([...]);
 
-        dd([
-            'public_id' => $obj->getPublicId(),
-            'url' => $obj->getSecurePath(),
-            'raw_response' => $obj->getResult(), // si quieres ver TODO lo que responde Cloudinary
-        ]);
+        
+        try {
+            Catalogo::create([
+                'titulo_post' => $request->input("titulo"),
+                'enlace_post' => $url,
+                'descripcion_post' => $request->input("descripcion"),
+                'public_id' => $public_id,
+                'tag_post' => $obj->getOriginalFileName(),
+                'type_post' => $obj->getFileType(),
+                'id_usuario' => auth()->id(),
+            ]);
+            // Queda pendiente eliminar el archivo del local.
+            return redirect()->route("dashboard");
+        } catch (\Exception $e) {
+                return redirect()->back()->with('danger', '¡Ups! oucrrio un problema al momento de almacenar el bordado '.$e);
+        }
+
+        // dd([
+        //     'public_id' => $obj->getPublicId(),
+        //     'url' => $obj->getPath(),
+        //     'filetype' => $obj->getFileType(),
+        //     'originalFileName' => $obj->getOriginalFileName(),
+        //     // 'raw_response' => $obj, // si quieres ver TODO lo que responde Cloudinary
+        // ]);
     }
 
     public function updatearchive(Request $request, $id)

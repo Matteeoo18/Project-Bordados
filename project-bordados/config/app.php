@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cloudinary
+    |--------------------------------------------------------------------------
+    |   Aqui van las variables .env para usar dentro de la app
+    |
+    */
+
+    'cly_url' => env('CLOUDINARY_URL'),
 ];
