@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 
+use File;
 use Illuminate\Http\Request;
 use App\Models\Catalogo;
 use Inertia\Inertia;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Storage;
 
 
 
@@ -67,7 +69,9 @@ class CatalogoController extends Controller
                 'id_usuario' => auth()->id(),
             ]);
             // Queda pendiente eliminar el archivo del local.
+            File::delete($path); // Funciona pero no nos esta elimnando la carpeta como tal solo el archivo. Probar con el disk (modificando el coso en el filesystem).
             return redirect()->route("dashboard");
+
         } catch (\Exception $e) {
                 return redirect()->back()->with('danger', '¡Ups! oucrrio un problema al momento de almacenar el bordado '.$e);
         }
