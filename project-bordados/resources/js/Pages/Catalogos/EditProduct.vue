@@ -19,6 +19,7 @@ const enlace = ref(props.producto.enlace_post)
 const descripcion = ref(props.producto.descripcion_post)
 const archivo = ref(null)
 const errorArchivo = ref('')
+const cambio_archivo = ref(false)
 const cargando = ref(false)
 
 // Validar tamaño
@@ -38,17 +39,18 @@ const actualizarProducto = () => {
     cargando.value = true
 
     const formData = new FormData()
-    formData.append('titulo_post', titulo.value)
-    formData.append('descripcion_post', descripcion.value)
-
-    if (archivo.value) {
-        if (!validarArchivo(archivo.value)) {
-            cargando.value = false
-            return
-        }
-        formData.append('enlace_post', archivo.value)
+    formData.append('titulo', titulo.value)
+    formData.append('descripcion', descripcion.value)
+    // Validamos si el archivo fue cambiado
+    if (cambio_archivo.value == true) {
+        formData.append('ruta', archivo.value.ruta);
+        formData.append('nombre', archivo.value.nombre);
+        formData.append('mime', archivo.value.mime);
+        formData.append('cambio_archivo', cambio_archivo.value ? '1' : '0')
+        console.log("Archivo cambiado, se envía nuevo archivo");
     } else {
         formData.append('enlace_post', enlace.value)
+        console.log("Archivo no cambiado, se envía enlace antiguo");
     }
 
     router.post(route('catalogo.update', props.producto.id), formData, {
@@ -62,8 +64,11 @@ const actualizarProducto = () => {
 
 // Recibir archivos del dropzone
 const filesU = (files) => {
-    archivo.value = files[0]
-}
+    // aqui se añade el archivo nuevo
+    archivo.value = files;
+    cambio_archivo.value = true;
+};
+
 // Función para verificar si es video
 const isVideo = (url) => {
     return /\.(mp4|webm|ogg)$/i.test(url)
@@ -121,7 +126,7 @@ const filePreview = computed(() => {
                         <p><span class="text-yellow-600 font-bold">¡IMPORTANTE! </span>antes de seleccionar el archivo
                             asegurese que no
                             supere las 100 MB.</p>
-                        <Dropzone></Dropzone>
+                        <Dropzone @file="filesU"></Dropzone>
                     </div>
 
                     <div>

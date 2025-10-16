@@ -16,13 +16,13 @@ const form = reactive({
     descripcion: ''
 })
 
-
 const filesU = (fileData) => {
+    console.log("Informacion documento", fileData,)
     archivo.value = fileData
     if (fileData) {
-        console.log("Archivo completo:", archivo.value)
+        // console.log("Archivo completo:", archivo.value)
     } else {
-        console.log("Archivo eliminado, archivo.value ahora es:", archivo.value)
+        // console.log("Archivo eliminado, archivo.value ahora es:", archivo.value)
     }
 }
 

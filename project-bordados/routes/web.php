@@ -47,6 +47,6 @@ Route::middleware([
     Route::get('/cloudinary-signature', [CatalogoController::class, 'signature'])->name('catalogo.signature');
     // Esta ruta es para el Dropzone
     Route::post('/dropzone', DropzoneController::class)->name('upload.archivo');
-    Route::post('/dropzone/eliminar', [DropzoneController::class, 'eliminarArchivo'])->name('dropzone.eliminar');
-
+    Route::post('/dropzone/eliminar', [DropzoneController::class, 'eliminarArchivoTemporal'])->name('dropzone.eliminar');
+    Route::post('/api/temp-delete', [DropzoneController::class, 'eliminarArchivoTemporal']);
 });

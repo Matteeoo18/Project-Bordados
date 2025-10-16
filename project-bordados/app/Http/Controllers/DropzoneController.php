@@ -50,18 +50,25 @@ class DropzoneController extends Controller
         // Group files by the date (week
         $dateFolder = date("Y-m-W");
 
+        // 🔥 Sanitizar el nombre del archivo ANTES de moverlo
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $extension = $file->getClientOriginalExtension();
+        $fileName = strtolower(str_replace(' ', '_', $originalName)) . '.' . $extension;
+
         // Build the file path
-        $filePath = "upload/{$mime}/{$dateFolder}/";
+        // $filePath = "upload/{$mime}/{$dateFolder}/";
+        $filePath = "temp_uploads/{$mime}/{$dateFolder}/";
         $finalPath = storage_path("app/" . $filePath);
 
         // move the file name
         // $finalpath es para donde se va a mover el archivo
         $file->move($finalPath, $fileName);
-
         return response()->json([
             'path' => $filePath,
             'name' => $fileName,
-            'mime_type' => $mime
+            'mime_type' => $mime,
+            'full_path' => $finalPath . $fileName, // 🔥 ruta completa real
+            'expires_at' => now()->addHours(3)->toDateTimeString()
         ]);
     }
 
@@ -82,23 +89,22 @@ class DropzoneController extends Controller
 
         return null;
     }
-    public function eliminarArchivo(Request $request)
+    public function eliminarArchivoTemporal(Request $request)
     {
         $ruta = $request->input('ruta');
         $nombre = $request->input('nombre');
 
         if (!$ruta || !$nombre) {
-            return response()->json(['mensaje' => 'Ruta o nombre no proporcionado.'], 400);
+            return response()->json(['mensaje' => 'Faltan datos para eliminar el archivo.'], 400);
         }
 
-        // Construimos la ruta absoluta en el sistema de archivos
         $rutaCompleta = storage_path("app/" . $ruta . $nombre);
 
         if (File::exists($rutaCompleta)) {
             File::delete($rutaCompleta);
-            return response()->json(['mensaje' => 'Archivo eliminado con éxito.'], 200);
+            return response()->json(['mensaje' => 'Archivo temporal eliminado correctamente.']);
         }
 
-        return response()->json(['mensaje' => 'El archivo no existe.'], 404);
+        return response()->json(['mensaje' => 'El archivo no existe o ya fue eliminado.']);
     }
 }
